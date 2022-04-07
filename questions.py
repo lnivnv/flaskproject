@@ -9,5 +9,5 @@ class Questions(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     picture = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    test_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("tests.id"))
+    test_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("Tests.id"))
     test = orm.relation('Tests')
