@@ -16,6 +16,7 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 
 @app.route('/')
+@app.route('/home')
 def index():
     return render_template('home.html')
 
@@ -56,12 +57,15 @@ def register():
         password = sha256_crypt.encrypt(str(form.password.data))
         con = sqlite3.connect("users.db")
         cur = con.cursor()
-        cur.execute("""INSERT INTO users(name, email, username, password) VALUES(?, ?, ?, ?)""",
+        try:
+            cur.execute("""INSERT INTO users(name, email, username, password) VALUES(?, ?, ?, ?)""",
                     (name, email, username, password, ))
-        con.commit()
-        con.close()
-        # flash('You are now registered and can log in', 'success')
-        return redirect(url_for('login'))
+            con.commit()
+            con.close()
+            return redirect(url_for('login'))
+        except Exception as e:
+            error = 'имя пользователя может быть занято'
+            return render_template('register.html', form=form, error=error)
 
     return render_template('register.html', form=form)
 
@@ -75,14 +79,13 @@ def login():
         cur = con.cursor()
         result = cur.execute("""SELECT * FROM users WHERE username = ?""", [username, ])
         if result:
-            # Get stored hash
             data = cur.fetchone()
             print(data)
             password = data[4]
             if sha256_crypt.verify(password_candidate, password):
                 session['logged_in'] = True
                 session['username'] = username
-                return 'You are now logged in'
+                flash('You are now logged in', 'success')
             else:
                 error = 'Invalid login'
                 return render_template('login.html', error=error)
@@ -100,7 +103,7 @@ def is_logged_in(f):
             return f(*args, **kwargs)
         else:
             flash('Unauthorized, Please login', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('home'))
     return wrap
 
 
@@ -109,7 +112,7 @@ def is_logged_in(f):
 def logout():
     session.clear()
     flash('You are now logged out', 'success')
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
