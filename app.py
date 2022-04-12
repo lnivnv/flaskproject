@@ -8,6 +8,11 @@ from functools import wraps
 app = Flask(__name__)
 
 Tests = Articles()
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_DB'] = 'myflaskapp'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 
 @app.route('/')
@@ -51,7 +56,7 @@ def register():
         password = sha256_crypt.encrypt(str(form.password.data))
         con = sqlite3.connect("users.db")
         cur = con.cursor()
-        cur.execute("""INSERT INTO users(name, email, username, password) VALUES(?, ?, ?, ?, ?)""",
+        cur.execute("""INSERT INTO users(name, email, username, password) VALUES(?, ?, ?, ?)""",
                     (name, email, username, password, ))
         con.commit()
         con.close()
@@ -68,13 +73,12 @@ def login():
         password_candidate = request.form['password']
         con = sqlite3.connect("users.db")
         cur = con.cursor()
-        result = cur.execute("""SELECT * FROM users WHERE username = ?""", (username, ))
-        print(len(list(result)))
-        if len(list(result)) == :
+        result = cur.execute("""SELECT * FROM users WHERE username = ?""", [username, ])
+        if result:
             # Get stored hash
             data = cur.fetchone()
             print(data)
-            password = data['password']
+            password = data[4]
             if sha256_crypt.verify(password_candidate, password):
                 session['logged_in'] = True
                 session['username'] = username
@@ -82,12 +86,10 @@ def login():
             else:
                 error = 'Invalid login'
                 return render_template('login.html', error=error)
-            # Close connection
             con.close()
         else:
             error = 'Username not found'
             return render_template('login.html', error=error)
-
     return render_template('login.html')
 
 
@@ -111,4 +113,5 @@ def logout():
 
 
 if __name__ == '__main__':
+    app.secret_key='secret123'
     app.run(port=8000, host='127.0.0.1')
