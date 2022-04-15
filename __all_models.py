@@ -1,2 +1,3 @@
-from . import tests
-from . import questions
+import tests
+import questions
+import answers
