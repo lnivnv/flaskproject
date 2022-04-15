@@ -1,8 +1,8 @@
 from flask import Flask
-from data import db_session
-from data.tests import Tests
-from data.questions import Questions
-from data.answers import Answers
+import db_session
+from tests import Tests
+from questions import Questions
+from answers import Answers
 import csv
 
 app = Flask(__name__)
@@ -10,7 +10,7 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
 def test():
-    db_session.global_init("db/tests.db")
+    db_session.global_init("tests.db")
     with open('tests.csv', encoding="utf8") as csvfile:
         reader = csv.reader(csvfile, delimiter=';', quotechar='"')
         for index, row in enumerate(reader):
@@ -23,7 +23,7 @@ def test():
 
 
 def question():
-    db_session.global_init("db/tests.db")
+    db_session.global_init("tests.db")
     with open('questions.csv', encoding="utf8") as csvfile:
         reader = csv.reader(csvfile, delimiter=';', quotechar='"')
         for index, row in enumerate(reader):
@@ -42,7 +42,7 @@ def question():
 
 
 def answer():
-    db_session.global_init("db/tests.db")
+    db_session.global_init("tests.db")
     with open('answers.csv', encoding="utf8") as csvfile:
         reader = csv.reader(csvfile, delimiter=';', quotechar='"')
         period = 0
@@ -64,8 +64,18 @@ def answer():
                 db_sess.commit()
 
 
-if __name__ == '__main__':
-    test()
-    question()
-    answer()
+def Articles():
+    tests = []
+    info = {}
+    db_sess = db_session.create_session()
+    for test_in in db_sess.query(Tests).all():
+        info['id'] = test_in.id
+        info['title'] = test_in.title
+        tests.append(info)
+        info = {}
+    return tests
 
+
+test()
+question()
+answer()
