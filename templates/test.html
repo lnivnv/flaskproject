@@ -1,5 +1,21 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>{{id}}</h1>
+<h1>{{title}}</h1>
+<body>
+    {% for item in tests %}
+        {% if item['title'] == title %}
+            {% for j in Question %}
+                {% if j['test_id'] == item['id'] %}
+        	    <h2>{{j["title"]}}</h2>
+		    {% if j["picture"] %}
+		        <div>
+			    <img src="\static\img\{{j["picture"]}}" alt="альтернативный текст">
+    		        </div>
+		    {% endif %}
+		{% endif %}
+	    {% endfor %}
+	{% endif %}
+    {% endfor %}
+</body>
 {% endblock %}
