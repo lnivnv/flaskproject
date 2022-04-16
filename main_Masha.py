@@ -76,6 +76,21 @@ def Articles():
     return tests
 
 
+def tests_questions():
+    questions = []
+    info = {}
+    db_sess = db_session.create_session()
+    for test_in in db_sess.query(Questions).all():
+        info['id'] = test_in.id
+        info['title'] = test_in.title
+        info['test_id'] = test_in.test_id
+        info['picture'] = test_in.picture
+        questions.append(info)
+        info = {}
+    return questions
+
+
 test()
 question()
 answer()
+print(tests_questions())
