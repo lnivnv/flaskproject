@@ -107,5 +107,5 @@ def tests_answers():
 test()
 question()
 answer()
-print(tests_questions())
-print(tests_answers())
+tests_questions()
+tests_answers()
