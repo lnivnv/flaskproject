@@ -1,5 +1,5 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, request
-from main_Masha import Articles
+from main_Masha import Articles, tests_questions
 import sqlite3
 from wtforms import Form, StringField, PasswordField, validators
 from passlib.hash import sha256_crypt
@@ -8,6 +8,7 @@ from functools import wraps
 app = Flask(__name__)
 
 Tests = Articles()
+Question = tests_questions()
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = '123456'
@@ -32,9 +33,9 @@ def tests():
     return render_template('tests.html', tests=Tests)
 
 
-@app.route('/test/<string:id>')
-def test(id):
-    return render_template('test.html', id=id)
+@app.route('/test/<title>')
+def test(title):
+    return render_template('test.html', title=title, tests=Tests, Question=Question)
 
 
 class RegisterForm(Form):
