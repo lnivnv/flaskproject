@@ -48,23 +48,23 @@ def answer():
         period = 0
         questionid = 1
         for index, row in enumerate(reader):
-            db_sess = db_session.create_session()
-            if row[1] == 'False':
-                if period == 3:
-                    period = 0
-                    questionid += 1
-                if period < 3:
+            if period == 4:
+                period = 0
+                questionid += 1
+            if period < 4:
+                db_sess = db_session.create_session()
+                if row[1] == 'False':
                     answers = Answers(title=row[0], is_correct=False, question_id=questionid)
                     db_sess.add(answers)
                     db_sess.commit()
-                    period += 1
-            else:
-                answers = Answers(title=row[0], is_correct=True, question_id=questionid)
-                db_sess.add(answers)
-                db_sess.commit()
+                else:
+                    answers = Answers(title=row[0], is_correct=True, question_id=questionid)
+                    db_sess.add(answers)
+                    db_sess.commit()
+                period += 1
 
 
-def Articles():
+def tests_tests():
     tests = []
     info = {}
     db_sess = db_session.create_session()
@@ -90,7 +90,22 @@ def tests_questions():
     return questions
 
 
+def tests_answers():
+    answers = []
+    info = {}
+    db_sess = db_session.create_session()
+    for test_in in db_sess.query(Answers).all():
+        info['id'] = test_in.id
+        info['title'] = test_in.title
+        info['question_id'] = test_in.question_id
+        info['is_correct'] = test_in.is_correct
+        answers.append(info)
+        info = {}
+    return answers
+
+
 test()
 question()
 answer()
 print(tests_questions())
+print(tests_answers())
