@@ -1,10 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+  <div class="alert alert-danger" role="alert">
   <h1>Tests</h1>
+  </div>
+  <div class="alert alert-warning" role="alert">
   <ul class="list-group">
     {% for test in tests %}
+      <div class="alert alert-success" role="alert">
       <li class="list-group-item"><a href="test/{{test.title}}">{{test.title}}</a></li>
+      </div>
     {% endfor %}
   </ul>
+  </div>
 {% endblock %}
