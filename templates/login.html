@@ -1,8 +1,11 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+  <div class="alert alert-danger" role="alert">
   <h1>Login</h1>
+  </div>
   <form action="" method="POST">
+    <div class="alert alert-warning" role="alert">
     <div class="form-group">
       <label>Username</label>
       <input type="text" name="username" class="form-control" value={{request.form.username}}>
@@ -13,4 +16,5 @@
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
+  </div>
 {% endblock %}
