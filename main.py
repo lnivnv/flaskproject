@@ -29,6 +29,11 @@ def about():
     return render_template('about.html')
 
 
+@app.route('/result')
+def result():
+    return render_template('result.html', tests=Tests, Question=Question, answer=Answer)
+
+
 @app.route('/tests')
 def tests():
     return render_template('tests.html', tests=Tests)
