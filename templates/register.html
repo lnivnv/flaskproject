@@ -1,8 +1,11 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+  <div class="alert alert-danger" role="alert">
   <h1>Register</h1>
+  </div>
   {% from "includes/_formhelpers.html" import render_field %}
+  <div class="alert alert-warning" role="alert">
   <form method="POST" action="">
     <div class="form-group">
       {{render_field(form.name, class_="form-control")}}
@@ -21,4 +24,5 @@
     </div>
     <p><input type="submit" class="btn btn-primary" value="Submit"></p>
   </form>
+  </div>
 {% endblock %}
