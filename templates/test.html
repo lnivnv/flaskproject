@@ -1,16 +1,20 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+<div class="alert alert-danger" role="alert">
 <h1>{{title}}</h1>
+</div>
 <body>
     {% set period = 0 %}
     {% for item in tests %}
         {% if item['title'] == title %}
             {% for j in Question %}
                 {% if j['test_id'] == item['id'] %}
+		    <div class="alert alert-warning" role="alert">
         	    <h2>{{j["title"]}}</h2>
+		    </div>
 		    {% if j["picture"] %}
-		        <div>
+		        <div class="alert alert-info" role="alert">
 			    <img src="\static\img\{{j["picture"]}}" alt="альтернативный текст">
     		        </div>
 		    {% endif %}
@@ -22,7 +26,9 @@
 				    <div class="form-group">
                     		    <input class="form-check-input" type="radio" name="{{q["question_id"]}}" id="{{q["id"]}}" value="{{q["id"]}}">
                         	    <label class="form-check-label" for="{{q["id"]}}">
+					<div class="alert alert-success" role="alert">
                                 	{{q["title"]}}
+					</div>
 				    </label>
                      		    </div>
 				{% endif %}
