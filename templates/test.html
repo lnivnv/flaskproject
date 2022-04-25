@@ -6,6 +6,7 @@
 </div>
 <body>
     {% set period = 0 %}
+    {% set aaa = [] %}
     {% for item in tests %}
         {% if item['title'] == title %}
             {% for j in Question %}
@@ -40,8 +41,8 @@
 	    {% endfor %}
 	{% endif %}
     {% endfor %}
-    <div class="alert alert-danger" role="alert">
-    <li class="list-group-item"><a href="/login">Посмотреть результат</a></li>
-    </div>
+<div class="alert alert-danger" role="alert">
+    <li class="list-group-item"><a href="/result">Посмотреть результат</a></li>
+</div>
 </body>
 {% endblock %}
