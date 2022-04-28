@@ -24,6 +24,11 @@ def index():
     return render_template('home.html')
 
 
+@app.route('/private office')
+def private_office():
+    return render_template('private office.html')
+
+
 @app.route('/about')
 def about():
     return render_template('about.html')
@@ -62,17 +67,21 @@ def register():
         name = form.name.data
         email = form.email.data
         username = form.username.data
-        password = sha256_crypt.encrypt(str(form.password.data))
+        password = sha256_crypt.hash(str(form.password.data))
+        picture = request.files['file']
+        print(picture)
         con = sqlite3.connect("users.db")
+        print(con)
         cur = con.cursor()
+        print(cur)
         try:
-            cur.execute("""INSERT INTO users(name, email, username, password) VALUES(?, ?, ?, ?)""",
-                        (name, email, username, password,))
+            cur.execute("""INSERT INTO users(name, email, username, password, picture) VALUES(?, ?, ?, ?, ?)""",
+                        (name, email, username, password, picture))
             con.commit()
             con.close()
             return redirect(url_for('login'))
         except Exception as e:
-            error = 'имя пользователя может быть занято'
+            error = 'Неправильно введены данные'
             return render_template('register.html', form=form, error=error)
 
     return render_template('register.html', form=form)
