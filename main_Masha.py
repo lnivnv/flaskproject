@@ -19,7 +19,8 @@ def test():
             db_sess = db_session.create_session()
             db_sess.add(tests)
             db_sess.commit()
-        # app.run()
+    csvfile.close()
+    tests = Tests()
 
 
 def question():
@@ -39,6 +40,7 @@ def question():
             db_sess = db_session.create_session()
             db_sess.add(questions)
             db_sess.commit()
+    csvfile.close()
 
 
 def answer():
@@ -62,18 +64,20 @@ def answer():
                     db_sess.add(answers)
                     db_sess.commit()
                 period += 1
+    csvfile.close()
 
 
 def tests_tests():
     tests = []
     info = {}
     db_sess = db_session.create_session()
+    s = 0
     for test_in in db_sess.query(Tests).all():
         info['id'] = test_in.id
         info['title'] = test_in.title
         tests.append(info)
         info = {}
-    return tests
+    return tests[0:3]
 
 
 def tests_questions():
@@ -87,7 +91,7 @@ def tests_questions():
         info['picture'] = test_in.picture
         questions.append(info)
         info = {}
-    return questions
+    return questions[0:23]
 
 
 def tests_answers():
@@ -101,7 +105,7 @@ def tests_answers():
         info['is_correct'] = test_in.is_correct
         answers.append(info)
         info = {}
-    return answers
+    return answers[0:95]
 
 
 test()
