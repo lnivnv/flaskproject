@@ -16,6 +16,8 @@ app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'myflaskapp'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+result = 0
+title_test = ''
 
 
 @app.route('/')
@@ -36,7 +38,7 @@ def about():
 
 @app.route('/result')
 def result():
-    return render_template('result.html', tests=Tests, Question=Question, answer=Answer)
+    return render_template('result.html', title=title_test, result=result, tests=Tests)
 
 
 @app.route('/tests')
@@ -44,9 +46,26 @@ def tests():
     return render_template('tests.html', tests=Tests)
 
 
-@app.route('/test/<title>')
+@app.route('/test/<title>', methods=["POST", "GET"])
 def test(title):
-    return render_template('test.html', title=title, tests=Tests, Question=Question, answer=Answer)
+    global title_test
+    title_test = title
+    if request.method == 'GET':
+        return render_template('test.html', title=title, tests=Tests, Question=Question, answer=Answer)
+    elif request.method == 'POST':
+        k, users_ans, users_answers = [], [], []
+        for q in Answer:
+            h = request.form.get(str(q["question_id"]))
+            if h == q["title"]:
+                users_ans.append(h)
+                print(q)
+                users_answers.append(q["is_correct"])
+        print(users_answers)
+        print(users_answers.count(True))
+        global result
+        result = users_answers.count(True)
+        return redirect('/result')
+        #return f'Your result in test "{title}" - {users_answers.count(True)} right answers!'
 
 
 class RegisterForm(Form):
@@ -69,11 +88,8 @@ def register():
         username = form.username.data
         password = sha256_crypt.hash(str(form.password.data))
         picture = request.files['file']
-        print(picture)
         con = sqlite3.connect("users.db")
-        print(con)
         cur = con.cursor()
-        print(cur)
         try:
             cur.execute("""INSERT INTO users(name, email, username, password, picture) VALUES(?, ?, ?, ?, ?)""",
                         (name, email, username, password, picture))
