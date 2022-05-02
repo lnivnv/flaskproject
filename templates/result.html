@@ -1,7 +1,12 @@
-{% extends 'test.html' %}
+{% extends 'layout.html' %}
 
 {% block body %}
 <body>
-<h1>{{period}}</h1>
+  <div class="alert alert-success" role="alert">
+    <h1>Ваш результат в тесте {{title}} - {{result}} правильных ответов</h1>
+  </div>
+  <div class="alert alert-info" role="alert">
+    <img src="\static\img\чётко.jpg" alt="image">
+  </div>
 </body>
 {% endblock %}
