@@ -11,6 +11,7 @@ from functools import wraps
 
 app = Flask(__name__)
 
+is_login_in_private_office = False
 Tests = tests_tests()
 Question = tests_questions()
 Answer = tests_answers()
@@ -23,6 +24,9 @@ app.config['MYSQL_DB'] = 'myflaskapp'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+result_test = 0
+title_test = ''
+username = ''
 
 
 def allowed_file(filename):
@@ -37,7 +41,19 @@ def index():
 
 @app.route('/private office')
 def private_office():
-    return render_template('private office.html')
+    if is_login_in_private_office:
+        con = sqlite3.connect("users.db")
+        cur = con.cursor()
+        result_private_office = cur.execute("""SELECT * FROM users WHERE username = ?""", [username, ])
+        for elem in result_private_office:
+            param = {}
+            param['username'] = elem[3]
+            param['name'] = elem[1]
+            param['email'] = elem[2]
+            param['picture'] = elem[5]
+            return render_template('private office.html', **param)
+    else:
+        return f'<h1>Вам надо зарегистрироваться или авторизоваться!</h1>'
 
 
 @app.route('/about')
@@ -47,7 +63,7 @@ def about():
 
 @app.route('/result')
 def result():
-    return render_template('result.html', tests=Tests, Question=Question, answer=Answer)
+    return render_template('result.html', title=title_test, result=result_test)
 
 
 @app.route('/tests')
@@ -58,17 +74,19 @@ def tests():
 @app.route('/test/<title>', methods=["POST", "GET"])
 def test(title):
     if request.method == 'GET':
+        global title_test
+        title_test = title
         return render_template('test.html', title=title, tests=Tests, Question=Question, answer=Answer)
     elif request.method == 'POST':
-        k, users_ans, users_answers = [], [], []
-        for q in Answer:
-            h = request.form.get(str(q["question_id"]))
-            if h == q["title"]:
-                users_ans.append(h)
-                users_answers.append(q["is_correct"])
-        print(users_answers)
-        print(users_answers.count(True))
-        return f'Your result in test "{title}" - {users_answers.count(True)} right answers!'
+        users_ans, users_answers = [], []
+        for answers in Answer:
+            is_clicked = request.form.get(str(answers["question_id"]))
+            if is_clicked == answers["title"]:
+                users_ans.append(is_clicked)
+                users_answers.append(answers["is_correct"])
+        global result_test
+        result_test = users_answers.count(True)
+        return redirect('/result')
 
 
 class RegisterForm(Form):
@@ -92,10 +110,6 @@ def register():
         username = form.username.data
         password = sha256_crypt.hash(str(form.password.data))
         picture = request.files['file']
-        # picture = picture.filename
-        # picture = str(picture)
-        # picture = picture[picture.index(':') + 3:]
-        # picture = picture[:picture.index("'")]
         if picture.filename != '' and allowed_file(picture.filename):
             con = sqlite3.connect("users.db")
             cur = con.cursor()
@@ -118,19 +132,22 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        global username
         username = request.form['username']
         password_candidate = request.form['password']
         con = sqlite3.connect("users.db")
         cur = con.cursor()
-        result = cur.execute("""SELECT * FROM users WHERE username = ?""", [username, ])
-        if result:
+        result_login = cur.execute("""SELECT * FROM users WHERE username = ?""", [username, ])
+        if result_login:
             data = cur.fetchone()
             password = data[4]
             if sha256_crypt.verify(password_candidate, password):
+                global is_login_in_private_office
+                is_login_in_private_office = True
                 session['logged_in'] = True
                 session['username'] = username
                 flash('You are now logged in', 'success')
-                return redirect('/private office')
+                return redirect('/home')
             else:
                 error = 'Invalid login or password'
                 return render_template('login.html', error=error)
@@ -155,6 +172,8 @@ def is_logged_in(f):
 @app.route('/logout')
 @is_logged_in
 def logout():
+    global is_login_in_private_office
+    is_login_in_private_office = False
     session.clear()
     flash('You are now logged out', 'success')
     return redirect('/home')
@@ -162,4 +181,4 @@ def logout():
 
 if __name__ == '__main__':
     app.secret_key = 'secret123'
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=5000, host='127.0.0.1')
