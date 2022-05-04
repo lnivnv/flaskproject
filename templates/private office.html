@@ -1,5 +1,14 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>Привет</h1>
+  <div class="alert alert-danger" role="alert">
+    <h1>Ваш личный кабинет</h1>
+  </div>
+  <div class="alert alert-warning" role="alert">
+    <h4>Ваше имя: {{name}}</h4>
+    <h4>Ваш ник: {{username}}</h4>
+    <h4>Ваша почта: {{email}}</h4>
+    <h4>Ваш аватар:</h4>
+    <img src="\static\img\{{picture}}" alt="image">
+  </div>
 {% endblock %}
