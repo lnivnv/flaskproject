@@ -1,38 +1,35 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<div class="alert alert-danger" role="alert">
+<div class="alert alert-danger" role="alert" xmlns="http://www.w3.org/1999/html">
 <h1>{{title}}</h1>
 </div>
 <body>
+<div>
+	<form class="login_form" method="post">
     {% set period = 0 %}
-    {% set aaa = [] %}
-    {% for item in tests %}
-        {% if item['title'] == title %}
-            {% for j in Question %}
-                {% if j['test_id'] == item['id'] %}
+    {% for test in tests %}
+        {% if test['title'] == title %}
+            {% for questions in Question %}
+                {% if questions['test_id'] == test['id'] %}
 		    <div class="alert alert-warning" role="alert">
-        	    <h2>{{j["title"]}}</h2>
+        	    <h2>{{questions["title"]}}</h2>
 		    </div>
-		    {% if j["picture"] %}
-		        <div class="alert alert-info" role="alert">
-			    <img src="\static\img\{{j["picture"]}}" alt="альтернативный текст">
-    		        </div>
+		    {% if questions["picture"] %}
+		<p align="center">
+			<img src="\static\img\{{ questions['picture'] }}" alt="image">
+		</p>
 		    {% endif %}
-		    {% for q in answer %}
-			{% if q['question_id'] == j['id'] %}
+		    {% for answers in answer %}
+			{% if answers['question_id'] == questions['id'] %}
 				{% if period == 4 %}
                 		    period = 0
             			{% elif period < 4 %}
 				    <div class="form-group">
 				    <div class="alert alert-info" role="alert">
-                    		    <input class="form-check-input" type="radio" name="{{q["question_id"]}}" id="{{q["id"]}}" value="{{q["id"]}}">
-                        	    <label class="form-check-label" for="{{q["id"]}}">
-					<div class="alert alert-success" role="alert">
-                                	{{q["title"]}}
+						<input class="form-check-input" type="radio" name="{{answers["question_id"]}}""
+						id="{{answers["id"]}}" value="{{answers["title"]}}"> {{ answers["title"] }}</input></br>
 					</div>
-				    </label>
-                     		    </div>
 				    </div>
 				{% endif %}
 			{% endif %}
@@ -41,8 +38,8 @@
 	    {% endfor %}
 	{% endif %}
     {% endfor %}
-<div class="alert alert-danger" role="alert">
-    <li class="list-group-item"><a href="/result">Посмотреть результат</a></li>
+<button type="submit" class="btn btn-primary">Посмотреть результат</button>
+	</form>
 </div>
 </body>
 {% endblock %}
